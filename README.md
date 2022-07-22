@@ -8,7 +8,7 @@ Forked and changed this API. If you want to donate to the real creator --> https
 
 ## How to use:
 
-*Important* note: I modified the api so that you get the exact tls fingerprint as the latest Chrome browser (You can check that on this website: https://tls.peet.ws/api/all). Make sure to always specify your User Agent as a Chrome User Agent.
+*Important* note: I modified the api and the libs it is using so that you get the exact tls fingerprint as the latest Chrome browser (You can check that on this website: https://tls.peet.ws/api/all). Make sure to always specify your User Agent as a Chrome User Agent.
 
 *Important* note: If you're using this in a language other than go, then use this repo. If you're using this in go, then take a look into the "godirect.test" file. In this file should be all you need. Rename it to "godirect.go", put it in an other directory, run this command: "go mod init SOMENAME" and install the necessary packages.
 
