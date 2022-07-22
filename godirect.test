@@ -1,0 +1,99 @@
+package main
+
+import (
+	"fmt"
+	"net/url"
+	//"strconv"
+	"strings"
+	//"bytes"
+	"compress/gzip"
+	"io/ioutil"
+
+	"github.com/davidlinketech/cclient"
+	http "github.com/davidlinketech/fhttp"
+	utls "github.com/Carcraftz/utls"
+)
+
+var client, _ = cclient.NewClient(utls.HelloChrome_100,"",true,6) //empty string = proxy	
+
+func getCookieStr(targetUrl string) string {
+	parsed,_ := url.Parse(targetUrl)
+	cookie := client.Jar.Cookies(parsed)
+	cookieString := ""
+	for _, c := range cookie {
+		cookieString += c.Name + "=" + c.Value + "; "
+	}
+	cookieString = cookieString[:len(cookieString)-2]
+	return cookieString
+}
+
+//be carefull to not set the "content-length" header
+func doPost(url string, headerArr map[string][]string, reqBody *strings.Reader) (string, string){
+	req, _ := http.NewRequest("POST", url, reqBody)
+	req.Header = headerArr
+	resp, err := client.Do(req)
+	if err != nil {
+        panic(err)
+    }
+	defer resp.Body.Close()
+	//must make content encoding handling better
+	if resp.Header.Get("content-encoding") != ""{
+		reader, _ := gzip.NewReader(resp.Body)
+		defer reader.Close()
+		body, _ := ioutil.ReadAll(reader)
+		return string(body), resp.Status
+	}else{
+		body, _ := ioutil.ReadAll(resp.Body)
+		return string(body), resp.Status
+	}
+}
+
+func doGet(url string, headerArr map[string][]string) (string, string) {
+	req,_ := http.NewRequest("GET", url, nil)
+	//fmt.Println(req.Cookies())
+	req.Header = headerArr
+	resp, err := client.Do(req)
+	if err != nil {
+        panic(err)
+    }
+    defer resp.Body.Close()
+	//must make content encoding handling better
+	if resp.Header.Get("content-encoding") != ""{
+		reader, _ := gzip.NewReader(resp.Body)
+		defer reader.Close()
+		body, _ := ioutil.ReadAll(reader)
+		return string(body), resp.Status
+	}else{
+		body, _ := ioutil.ReadAll(resp.Body)
+		return string(body), resp.Status
+	}
+}
+
+func main() {										
+	arr := http.Header{
+		"accept": {"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"},
+		"accept-encoding": {"gzip, deflate, br"},
+		"accept-language": {"de,en-US;q=0.9,en;q=0.8"},
+		"sec-ch-ua": {"\".Not/A)Brand\";v=\"99\", \"Google Chrome\";v=\"103\", \"Chromium\";v=\"103\""},
+		"sec-ch-ua-mobile": {"?0"},
+		"sec-ch-ua-platform": {"\"Windows\""},
+		"sec-fetch-dest": {"document"},
+		"sec-fetch-mode": {"navigate"},
+		"sec-fetch-site": {"none"},
+		"sec-fetch-user": {"?1"},
+		"upgrade-insecure-requests": {"1"},
+		"user-agent": {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"},
+		http.HeaderOrderKey:{
+			"sec-ch-ua", "sec-ch-ua-mobile","sec-ch-ua-platform","upgrade-insecure-requests","user-agent","accept","sec-fetch-site","sec-fetch-mode","sec-fetch-user","sec-fetch-dest","accept-encoding","accept-language",
+		},
+		http.PHeaderOrderKey: {
+			":method",
+			":authority",
+			":scheme",
+			":path",
+		},
+	}
+
+	body, _ := doGet("https://tls.peet.ws/api/all", arr) 
+	fmt.Println(body)
+}

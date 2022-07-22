@@ -4,18 +4,20 @@ A server that proxies requests and uses my fork of cclient & fhttp (fork of net/
 
 ## Support
 
-I decided to make this after being tired of similar software being gatekept. If you like my work, any support would be greatly appreciated ❤️
-https://paypal.me/carcraftz
+Forked and changed this API. If you want to donate to the real creator --> https://paypal.me/carcraftz
 
 ## How to use:
 
-Note: If you're using this in a language other than go, then use this repo. But if you're using this in go, I would reccomend using my fork of cclient instead (https://github.com/Carcraftz/cclient), which lets you access the request library directly instead of deploying a HTTP server on the localhost. The only difference is it doesn't set header order for you, you have to specify the header order yourself in the request.
+*Important* note: I modified the api so that you get the exact tls fingerprint as the latest Chrome browser (You can check that on this website: https://tls.peet.ws/api/all). Make sure to always specify your User Agent as a Chrome User Agent.
+*Important* note: If you're using this in a language other than go, then use this repo. If you're using this in go, then take a look into the "godirect.test" file. In this file should be all you need. Rename it to "godirect.go", put it in an other directory, run this command: "go mod init SOMENAME" and install the necessary packages.
 
-Deploy this server somewhere. Localhost is preferrable to reduce latency. The go source code is given if you want to build it yourself on any platform (windows, macos, linux). I will also be attaching a prebuilt windows exe if you don't want to build it yourself
+Deploy this server somewhere. Localhost is preferrable to reduce latency. The go source code is given if you want to build it yourself on any platform (windows, macos, linux). I attached a prebuilt windows exe.
 
 Modify your code to make requests to the server INSTEAD of the endpoint you want to request. Ex: If running on localhost, make requests to http://127.0.0.1:8082. Make sure to also remove any code that uses a proxy in the request.
 
 Add the request header "poptls-url", and set it equal to the endpoint you want to request. For example, if you want to request https://httpbin.org/get, you would add the header "poptls-url" = "https://httpbin.org/get"
+
+Will add an option to retrieve the session cookies soon.
 
 Optional: Add the request header "poptls-proxy" and set it equal to the URL for the proxy you want to use (format: http://user:pass@host:port or http://host:port). This will make the server use your proxy for the request.
 
@@ -23,11 +25,21 @@ Optional: Add the request header "poptls-allowredirect" and set it to true or fa
 
 Optional: Add the request header "poptls-timeout" and set it to an integer (in seconds) to specify the max timeout to wait for a request.
 
+
+
 ## Run on a different Port:
 
 By default the program runs on port 8082. You can specify another port by passing a flag --port=PORTNUM
 
 ## Examples:
+
+### GO
+
+Take a look into the "godirect.test" file.
+
+### Python
+
+Take a look into the "apitest.py" file.
 
 ### Node.js
 

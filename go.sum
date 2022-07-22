@@ -5,8 +5,12 @@ github.com/andybalholm/brotli v1.0.4 h1:V7DdXeJtZscaqfNuAdSRuRFzuiKlHSC/Zh3zl9qY
 github.com/andybalholm/brotli v1.0.4/go.mod h1:fO7iG3H7G2nSZ7m0zPUDn85XEX2GTukHGRSepvi9Eig=
 github.com/davidlinketech/cclient v1.1.5 h1:5+ExYHHNLA1MyDr+0O+cGTUfMzEI9AUqOgIGzI0/4xE=
 github.com/davidlinketech/cclient v1.1.5/go.mod h1:QK8ZwybPcgnzaOck/50+hA9lp4jWSeaY+PcazybGwBI=
+github.com/davidlinketech/cclient v1.1.6 h1:MlKVe1jCfPT3x92txhMA2geGiTwOrXeY+lBPMNF6r9k=
+github.com/davidlinketech/cclient v1.1.6/go.mod h1:gIdyK/EYjAbhBc0zosgiL1JFjdpHakjiAiXnjIa0+hU=
 github.com/davidlinketech/fhttp v1.2.1 h1:zT82Y8OXZ4ZZKqz8XfDyU+HbO4QVABKBUmqODajUSYA=
 github.com/davidlinketech/fhttp v1.2.1/go.mod h1:yQ+rRGaAnGThd6T8i+UkNj+GabEoOY8IMymyFHzxEfk=
+github.com/davidlinketech/fhttp v1.2.2 h1:p2AknpqwuiCBcYq21x+1PRpw+ozELE4n28yNGBs2IY0=
+github.com/davidlinketech/fhttp v1.2.2/go.mod h1:yQ+rRGaAnGThd6T8i+UkNj+GabEoOY8IMymyFHzxEfk=
 github.com/dsnet/compress v0.0.1 h1:PlZu0n3Tuv04TzpfPbrnI0HW/YwodEXDS+oPKahKF0Q=
 github.com/dsnet/compress v0.0.1/go.mod h1:Aw8dCMJ7RioblQeTqt88akK31OvO8Dhf5JflhBbQEHo=
 github.com/dsnet/golib v0.0.0-20171103203638-1ea166775780/go.mod h1:Lj+Z9rebOhdfkVLjJ8T6VcRQv3SXugXy999NBtR9aFY=

@@ -2,7 +2,7 @@ module tlsapi
 
 go 1.18
 
-require github.com/davidlinketech/fhttp v1.2.1
+require github.com/davidlinketech/fhttp v1.2.2
 
 require (
 	github.com/mattn/go-colorable v0.1.9 // indirect
@@ -12,7 +12,7 @@ require (
 require (
 	github.com/Carcraftz/utls v0.0.0-20220413235215-6b7c52fd78b6 // indirect
 	github.com/andybalholm/brotli v1.0.4
-	github.com/davidlinketech/cclient v1.1.5
+	github.com/davidlinketech/cclient v1.1.6
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/fatih/color v1.13.0
 	gitlab.com/yawning/bsaes.git v0.0.0-20190805113838-0a714cd429ec // indirect
