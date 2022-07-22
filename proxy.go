@@ -15,10 +15,10 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/Carcraftz/cclient"
+	"github.com/davidlinketech/cclient"
 	"github.com/andybalholm/brotli"
 
-	http "github.com/Carcraftz/fhttp"
+	http "github.com/davidlinketech/fhttp"
 
 	tls "github.com/Carcraftz/utls"
 )
@@ -29,7 +29,7 @@ func main() {
 	port := flag.String("port", "8082", "A port number (default 8082)")
 	flag.Parse()
 	fmt.Println("Hosting a TLS API on port " + *port)
-	fmt.Println("If you like this API, all donations are appreciated! https://paypal.me/carcraftz")
+	fmt.Println("Forked and changed this API. If you want to donate to the real creator --> https://paypal.me/carcraftz")
 	http.HandleFunc("/", handleReq)
 	err := http.ListenAndServe(":"+string(*port), nil)
 	if err != nil {
@@ -252,6 +252,7 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		finalres = string(body)
+		//w.Write([]byte(finalres))
 	}
 	if _, err := fmt.Fprint(w, finalres); err != nil {
 		log.Println("Error writing body:", err)
