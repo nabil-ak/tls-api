@@ -22,4 +22,5 @@ headers = {
 res = s.get('http://localhost:8082', headers=headers)
 print(res.status_code)
 print(res.text)
+print(res.headers)
 input('Press enter to close...')

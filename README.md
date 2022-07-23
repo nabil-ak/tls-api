@@ -18,7 +18,7 @@ Modify your code to make requests to the server INSTEAD of the endpoint you want
 
 Add the request header "poptls-url", and set it equal to the endpoint you want to request. For example, if you want to request https://httpbin.org/get, you would add the header "poptls-url" = "https://httpbin.org/get"
 
-Will add an option to retrieve the session cookies soon.
+You will find the session cookies in the response-header "session-cookies".
 
 Optional: Add the request header "poptls-proxy" and set it equal to the URL for the proxy you want to use (format: http://user:pass@host:port or http://host:port). This will make the server use your proxy for the request.
 

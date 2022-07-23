@@ -40,12 +40,15 @@ func main() {
 func getCookieStr(targetUrl string, client http.Client) string {
 	parsed,_ := url.Parse(targetUrl)
 	cookie := client.Jar.Cookies(parsed)
-	cookieString := ""
-	for _, c := range cookie {
-		cookieString += c.Name + "=" + c.Value + "; "
+	if len(cookie) > 1{
+		cookieString := ""
+		for _, c := range cookie {
+			cookieString += c.Name + "=" + c.Value + "; "
+		}
+		cookieString = cookieString[:len(cookieString)-2]
+		return cookieString
 	}
-	cookieString = cookieString[:len(cookieString)-2]
-	return cookieString
+	return ""
 }
 
 func handleReq(w http.ResponseWriter, r *http.Request) {
