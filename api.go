@@ -37,6 +37,17 @@ func main() {
 	}
 }
 
+func getCookieStr(targetUrl string, client http.Client) string {
+	parsed,_ := url.Parse(targetUrl)
+	cookie := client.Jar.Cookies(parsed)
+	cookieString := ""
+	for _, c := range cookie {
+		cookieString += c.Name + "=" + c.Value + "; "
+	}
+	cookieString = cookieString[:len(cookieString)-2]
+	return cookieString
+}
+
 func handleReq(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	// Ensure page URL header is provided
@@ -213,6 +224,7 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+	w.Header().Add("session-cookies", getCookieStr(pageURL, client))
 	w.WriteHeader(resp.StatusCode)
 	var status string
 	if resp.StatusCode > 302 {
