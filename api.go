@@ -4,23 +4,23 @@ import (
 	"compress/zlib"
 	"flag"
 	"fmt"
-	"github.com/fatih/color"
 	"io/ioutil"
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/fatih/color"
 
 	"bytes"
 	"compress/gzip"
 	"net/url"
 	"strings"
 
-	"github.com/davidlinketech/cclient"
 	"github.com/andybalholm/brotli"
 
-	http "github.com/davidlinketech/fhttp"
+	tls_client "github.com/bogdanfinn/tls-client"
 
-	tls "github.com/Carcraftz/utls"
+	http "github.com/bogdanfinn/fhttp"
 )
 
 //var client http.Client
@@ -37,10 +37,10 @@ func main() {
 	}
 }
 
-func getCookieStr(targetUrl string, client http.Client) string {
-	parsed,_ := url.Parse(targetUrl)
-	cookie := client.Jar.Cookies(parsed)
-	if len(cookie) > 1{
+func getCookieStr(targetUrl string, client tls_client.HttpClient) string {
+	parsed, _ := url.Parse(targetUrl)
+	cookie := client.GetCookies(parsed)
+	if len(cookie) > 1 {
 		cookieString := ""
 		for _, c := range cookie {
 			cookieString += c.Name + "=" + c.Value + "; "
@@ -74,17 +74,7 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 	if proxy != "" {
 		r.Header.Del("Poptls-Proxy")
 	}
-	//handle redirects and timeouts
-	redirectVal := r.Header.Get("Poptls-Allowredirect")
-	allowRedirect := true
-	if redirectVal != "" {
-		if redirectVal == "false" {
-			allowRedirect = false
-		}
-	}
-	if redirectVal != "" {
-		r.Header.Del("Poptls-Allowredirect")
-	}
+
 	timeoutraw := r.Header.Get("Poptls-Timeout")
 	timeout, err := strconv.Atoi(timeoutraw)
 	if err != nil {
@@ -95,19 +85,14 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "ERROR: Timeout cannot be longer than 60 seconds", http.StatusBadRequest)
 		return
 	}
-	// Change JA3
-	//var tlsClient tls.ClientHelloID
-	/*
-	if strings.Contains(strings.ToLower(userAgent), "chrome") {
-		tlsClient = tls.HelloChrome_Auto
-	} else if strings.Contains(strings.ToLower(userAgent), "firefox") {
-		tlsClient = tls.HelloFirefox_Auto
-	} else {
-		tlsClient = tls.HelloIOS_Auto
-	}
-	*/
 
-	client, err := cclient.NewClient(tls.HelloChrome_100, proxy, allowRedirect, time.Duration(timeout))
+	options := []tls_client.HttpClientOption{
+		tls_client.WithTimeout(timeout),
+		tls_client.WithClientProfile(tls_client.Chrome_107),
+		tls_client.WithProxyUrl(proxy),
+	}
+
+	client, err := tls_client.NewHttpClient(tls_client.NewNoopLogger(), options...)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -218,7 +203,6 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 	defer resp.Body.Close()
 
 	//req.Close = true
-
 	//forward response headers
 	for k, v := range resp.Header {
 		if k != "Content-Length" && k != "Content-Encoding" {
@@ -238,14 +222,13 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("[%s][%s][%s]\r\n", color.YellowString("%s", time.Now().Format("2012-11-01T22:08:41+00:00")), color.BlueString("%s", pageURL), status)
 
 	//forward decoded response body
-	encoding := resp.Header["Content-Encoding"]
+	//encoding := resp.Header["Content-Encoding"]
 	body, err := ioutil.ReadAll(resp.Body)
-	finalres := ""
 	if err != nil {
 		panic(err)
 	}
-	finalres = string(body)
-	if len(encoding) > 0 {
+	finalres := string(body)
+	/*if len(encoding) > 0 {
 		if encoding[0] == "gzip" {
 			unz, err := gUnzipData(body)
 			if err != nil {
@@ -270,7 +253,7 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		finalres = string(body)
-	}
+	}*/
 	if _, err := fmt.Fprint(w, finalres); err != nil {
 		log.Println("Error writing body:", err)
 	}
