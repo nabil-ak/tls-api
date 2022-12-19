@@ -21,9 +21,12 @@ import (
 	tls_client "github.com/bogdanfinn/tls-client"
 
 	http "github.com/bogdanfinn/fhttp"
+	httputil "github.com/bogdanfinn/fhttp/httputil"
 )
 
 //var client http.Client
+
+var consumption = 0.0
 
 func main() {
 	port := flag.String("port", "8082", "A port number (default 8082)")
@@ -185,8 +188,9 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 	}
 	req.Header.Set("Host", u.Host)
 	resp, err := client.Do(req)
+
 	if err != nil {
-		fmt.Printf("[%s][%s][%s]\r\n", color.YellowString("%s", time.Now().Format("2012-11-01T22:08:41+00:00")), color.BlueString("%s", pageURL), color.RedString("Connection Failed"))
+		fmt.Printf("[%s][%s][%s]\r\n", color.YellowString("%s", time.Now().Format("2006-01-02 15:04:05")), color.BlueString("%s", pageURL), color.RedString("Connection Failed"))
 		hj, ok := w.(http.Hijacker)
 		if !ok {
 			panic(err)
@@ -198,6 +202,10 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 		if err := conn.Close(); err != nil {
 			panic(err)
 		}
+
+		requestBytes, _ := httputil.DumpRequest(req, true)
+		kiloBytes := float64(len(requestBytes)) / 1000
+		consumption += kiloBytes
 		return
 	}
 	defer resp.Body.Close()
@@ -219,7 +227,14 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 	} else {
 		status = color.GreenString("%s", resp.Status)
 	}
-	fmt.Printf("[%s][%s][%s]\r\n", color.YellowString("%s", time.Now().Format("2012-11-01T22:08:41+00:00")), color.BlueString("%s", pageURL), status)
+
+	requestBytes, _ := httputil.DumpRequest(req, true)
+	responseBytes, _ := httputil.DumpResponse(resp, true)
+
+	kiloBytes := float64(len(requestBytes)+len(responseBytes)) / 1000
+	consumption += kiloBytes
+
+	fmt.Printf("[%s][%s][%s][%.2f kB][%.2f kB]\r\n", color.YellowString("%s", time.Now().Format("2006-01-02 15:04:05")), color.BlueString("%s", pageURL), status, kiloBytes, consumption)
 
 	//forward decoded response body
 	//encoding := resp.Header["Content-Encoding"]
