@@ -26,7 +26,7 @@ import (
 
 //var client http.Client
 
-var consumption = 0.0
+var consumption uint64 = 0.0
 
 func main() {
 	port := flag.String("port", "8082", "A port number (default 8082)")
@@ -205,7 +205,7 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 
 		requestBytes, _ := httputil.DumpRequest(req, true)
 		kiloBytes := float64(len(requestBytes)) / 1000
-		consumption += kiloBytes
+		consumption += uint64(kiloBytes)
 		return
 	}
 	defer resp.Body.Close()
@@ -232,9 +232,9 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 	responseBytes, _ := httputil.DumpResponse(resp, true)
 
 	kiloBytes := float64(len(requestBytes)+len(responseBytes)) / 1000
-	consumption += kiloBytes
+	consumption += uint64(kiloBytes)
 
-	fmt.Printf("[%s][%s][%s][%.2f kB][%.2f kB]\r\n", color.YellowString("%s", time.Now().Format("2006-01-02 15:04:05")), color.BlueString("%s", pageURL), status, kiloBytes, consumption)
+	fmt.Printf("[%s][%s][%s][%.2f kB][%d kB]\r\n", color.YellowString("%s", time.Now().Format("2006-01-02 15:04:05")), color.BlueString("%s", pageURL), status, kiloBytes, consumption)
 
 	//forward decoded response body
 	//encoding := resp.Header["Content-Encoding"]
