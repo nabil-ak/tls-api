@@ -91,7 +91,7 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 
 	options := []tls_client.HttpClientOption{
 		tls_client.WithTimeout(timeout),
-		tls_client.WithClientProfile(tls_client.Firefox_106),
+		tls_client.WithClientProfile(tls_client.Chrome_110),
 		tls_client.WithProxyUrl(proxy),
 	}
 
