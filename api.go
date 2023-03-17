@@ -1,7 +1,6 @@
 package main
 
 import (
-	"compress/zlib"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -11,12 +10,8 @@ import (
 
 	"github.com/fatih/color"
 
-	"bytes"
-	"compress/gzip"
 	"net/url"
 	"strings"
-
-	"github.com/andybalholm/brotli"
 
 	tls_client "github.com/bogdanfinn/tls-client"
 
@@ -40,9 +35,8 @@ func main() {
 	}
 }
 
-func getCookieStr(targetUrl string, client tls_client.HttpClient) string {
-	parsed, _ := url.Parse(targetUrl)
-	cookie := client.GetCookies(parsed)
+func getCookieStr(response *http.Response) string {
+	cookie := response.Cookies()
 	if len(cookie) > 1 {
 		cookieString := ""
 		for _, c := range cookie {
@@ -219,7 +213,7 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	w.Header().Add("session-cookies", getCookieStr(pageURL, client))
+	w.Header().Add("session-cookies", getCookieStr(resp))
 	w.WriteHeader(resp.StatusCode)
 	var status string
 	if resp.StatusCode > 302 {
@@ -272,22 +266,4 @@ func handleReq(w http.ResponseWriter, r *http.Request) {
 	if _, err := fmt.Fprint(w, finalres); err != nil {
 		log.Println("Error writing body:", err)
 	}
-}
-
-func gUnzipData(data []byte) (resData []byte, err error) {
-	gz, _ := gzip.NewReader(bytes.NewReader(data))
-	defer gz.Close()
-	respBody, err := ioutil.ReadAll(gz)
-	return respBody, err
-}
-func enflateData(data []byte) (resData []byte, err error) {
-	zr, _ := zlib.NewReader(bytes.NewReader(data))
-	defer zr.Close()
-	enflated, err := ioutil.ReadAll(zr)
-	return enflated, err
-}
-func unBrotliData(data []byte) (resData []byte, err error) {
-	br := brotli.NewReader(bytes.NewReader(data))
-	respBody, err := ioutil.ReadAll(br)
-	return respBody, err
 }
